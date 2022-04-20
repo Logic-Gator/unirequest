@@ -1,0 +1,13 @@
+{
+  "name": "com.chonkygator.logic.web",
+  "version": "0.0.1",
+  "displayName": "GatOR Web",
+  "unity": "2020.3",
+  "dependencies": {
+  },
+  "keywords": [
+    "gator",
+    "logicgator",
+    "chonkygator"
+  ]
+}
