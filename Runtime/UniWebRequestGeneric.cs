@@ -3,16 +3,16 @@ using UnityEngine.Networking;
 
 namespace GatOR.Logic.Web
 {
-    public struct UniWebRequest<TDownloadHandler> : IRequest<TDownloadHandler> where TDownloadHandler : DownloadHandler
+    public struct UniWebRequest<T> : IRequest<T>
     {
         private UnityWebRequest request;
         public UnityWebRequest Request => request ??= new UnityWebRequest();
-        public TDownloadHandler DownloadHandler => (TDownloadHandler)Request.downloadHandler;
-
-        public UniWebRequest(UnityWebRequest request, TDownloadHandler downloadHandler)
+        public DataGetter<T> DataGetter { get; }
+        
+        public UniWebRequest(UnityWebRequest request, DataGetter<T> dataGetter)
         {
             this.request = request;
-            request.downloadHandler = downloadHandler;
+            DataGetter = dataGetter;
         }
     }
 }

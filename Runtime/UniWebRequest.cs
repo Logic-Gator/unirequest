@@ -3,11 +3,11 @@ using UnityEngine.Networking;
 
 namespace GatOR.Logic.Web
 {
-    public struct UniWebRequest : IRequest<DownloadHandler>
+    public struct UniWebRequest : IRequest
     {
         private UnityWebRequest request;
         public UnityWebRequest Request => request ??= new UnityWebRequest();
-        public DownloadHandler DownloadHandler => Request.downloadHandler;
+        public DataGetter<UnityWebRequest> DataGetter => GetRequest;
 
         public UniWebRequest(UnityWebRequest request)
         {
@@ -44,6 +44,8 @@ namespace GatOR.Logic.Web
 
         public static UniWebRequest Trace(string url) => new(url, "PATCH");
         public static UniWebRequest Patch(Uri uri) => new(uri, "PATCH");
+
+        private static UnityWebRequest GetRequest(UnityWebRequest request) => request;
 
         public static implicit operator UnityWebRequest(UniWebRequest request) => ((IRequest)request).Request;
         public static implicit operator UniWebRequest(UnityWebRequest request) => new(request);

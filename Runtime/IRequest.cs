@@ -7,8 +7,8 @@ namespace GatOR.Logic.Web
         UnityWebRequest Request { get; }
     }
 
-    public interface IRequest<TDownloadHandler> : IRequest where TDownloadHandler : DownloadHandler
+    public interface IRequest<T> : IRequest
     {
-        TDownloadHandler DownloadHandler { get; }
+        DataGetter<T> DataGetter { get; }
     }
 }
