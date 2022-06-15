@@ -6,35 +6,49 @@ namespace GatOR.Logic.Web
 {
     public static class TaskRequestSender
     {
-        public delegate Task<UniWebRequestResult> Delegate(IRequest request, CancellationToken cancellationToken = default);
-        public delegate Task<UniWebRequestResult<T>> Delegate<T>(IRequest<T> request, CancellationToken cancellationToken = default);
+        public delegate Task Func(UnityWebRequest request, CancellationToken cancellationToken = default);
 
-        public static async Task<UniWebRequestResult> SendAsTask(this IRequest request, CancellationToken cancellationToken = default)
+        public static Func Sender { get; } = Send;
+
+        public static async Task Send(UnityWebRequest request, CancellationToken cancellationToken = default)
         {
-            request.Request.downloadHandler ??= new DownloadHandlerBuffer();
+            request.DownloadNothingIfNotSet();
 
-            cancellationToken.Register(() => request.Request.Abort());
-            await request.Request.SendWebRequest();
+            cancellationToken.Register(request.Abort);
+            await request.SendWebRequest();
             cancellationToken.ThrowIfCancellationRequested();
+        }
+
+        public static async Task<UniWebRequestResult> SendAsTask(this UniWebRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            await Send(request, cancellationToken);
+            request.ThrowIfException();
             return new(request);
         }
 
-        public static async Task<UniWebRequestResult<T>> SendAsTask<T>(this IRequest<T> request, CancellationToken cancellationToken = default)
+        public static async Task<UniWebRequestResult<T>> SendAsTask<T>(this UniWebRequest<T> request,
+            CancellationToken cancellationToken = default)
         {
-            await SendAsTask((IRequest)request, cancellationToken);
+            await Send(request.Request, cancellationToken);
+            request.ThrowIfException();
             return new(request);
         }
 
-        public static Task<UniWebRequestResult> SendAsyncWith(this IRequest request, Delegate taskRequestSender,
+        public static async Task<UniWebRequestResult> SendAsyncWith(this UniWebRequest request, Func sender,
             CancellationToken cancellationToken = default)
         {
-            return taskRequestSender(request, cancellationToken);
+            await sender(request.Request, cancellationToken);
+            request.ThrowIfException();
+            return new(request);
         }
 
-        public static Task<UniWebRequestResult<T>> SendAsyncWith<T>(this IRequest<T> request, Delegate<T> taskRequestSender,
-            CancellationToken cancellationToken = default)
+        public static async Task<UniWebRequestResult<T>> SendAsyncWith<T>(this UniWebRequest<T> request,
+            Func sender, CancellationToken cancellationToken = default)
         {
-            return taskRequestSender(request, cancellationToken);
+            await sender(request.Request, cancellationToken);
+            request.ThrowIfException();
+            return new(request);
         }
     }
 }

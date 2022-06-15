@@ -11,14 +11,18 @@ namespace GatOR.Logic.Web
         public static async Task<T> GetData<T>(this Task<UniWebRequestResult<T>> task)
         {
             var result = await task;
-            return result.GetData();
+            var data = result.Data;
+            result.Request.Dispose();
+            return data;
         }
 
 #if UNITASK
         public static async Cysharp.Threading.Tasks.UniTask<T> GetData<T>(this Cysharp.Threading.Tasks.UniTask<UniWebRequestResult<T>> task)
         {
             var result = await task;
-            return result.GetData();
+            var data = result.Data;
+            result.Request.Dispose();
+            return data;
         }
 #endif
     }

@@ -47,7 +47,7 @@ namespace GatOR.Logic.Web
 
         private static UnityWebRequest GetRequest(UnityWebRequest request) => request;
 
-        public static implicit operator UnityWebRequest(UniWebRequest request) => ((IRequest)request).Request;
+        public static implicit operator UnityWebRequest(UniWebRequest request) => request.Request;
         public static implicit operator UniWebRequest(UnityWebRequest request) => new(request);
     }
 }

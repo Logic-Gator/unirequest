@@ -6,6 +6,26 @@ namespace GatOR.Logic.Web
 {
     public static class DownloadBuilderExtensions
     {
+        public static UniWebRequest DownloadNothing(this UniWebRequest request)
+        {
+            request.Request.DownloadNothing();
+            return request;
+        }
+
+        public static UnityWebRequest DownloadNothing(this UnityWebRequest request)
+        {
+            request.downloadHandler = NoDownloadHandler.Instance;
+            return request;
+        }
+
+        public static UnityWebRequest DownloadNothingIfNotSet(this UnityWebRequest request)
+        {
+            if (request.downloadHandler == null)
+                request.DownloadNothing();
+            return request;
+        }
+
+
         public static UniWebRequest<TData> DownloadWith<T, TData>(this T request, DataGetter<TData> dataGetter)
             where T : IRequest
         {
@@ -45,6 +65,12 @@ namespace GatOR.Logic.Web
         {
             request.SetAcceptHeader("application/json");
             return request.DownloadWithBuffer(r => JsonUtility.FromJson<TJson>(r.downloadHandler.text));
+        }
+
+        public static UniWebRequest<Texture2D> DownloadTexture<T>(this T request, bool readable = false) where T : IRequest
+        {
+            request.DownloadWith(new DownloadHandlerTexture(readable));
+            return new UniWebRequest<Texture2D>(request.Request, DownloadHandlerTexture.GetContent);
         }
     }
 }

@@ -3,49 +3,66 @@ using UnityEngine.Networking;
 
 namespace GatOR.Logic.Web
 {
-    public readonly struct UniWebRequestResult
+    public class UniWebRequestResult
     {
+#if JSONNET
+        [Newtonsoft.Json.JsonIgnore]
+#endif
         public UnityWebRequest Request { get; }
         public long Status => Request.responseCode;
         public string Error => Request.error;
+
+        public string GetHeaderValue(string headerName)
+        {
+            return Request.GetResponseHeader(headerName);
+        }
 
         public UniWebRequestResult(UnityWebRequest request)
         {
             Request = request;
         }
 
-        public UniWebRequestResult(IRequest request) : this(request.Request)
+        public UniWebRequestResult(UniWebRequest request) : this(request.Request)
         {
         }
+
+#if JSONNET
+        public string ToJson(Newtonsoft.Json.Formatting formatting = Newtonsoft.Json.Formatting.Indented)
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this, formatting);
+        }
+
+        public override string ToString() => ToJson();
+#endif
     }
 
-    public readonly struct UniWebRequestResult<T>
+    public class UniWebRequestResult<T> : UniWebRequestResult
     {
-        public UnityWebRequest Request { get; }
-        public long Status => Request.responseCode;
-        public string Error => Request.error;
-
-        private readonly DataGetter<T> dataGetter;
-        
-        public T GetData()
+        private bool gotData;
+        private T data;
+        public T Data
         {
-            return dataGetter(Request);
+            get
+            {
+                if (!gotData)
+                {
+                    data = dataGetter(Request);
+                    gotData = true;
+                }
+                return data;
+            }
         }
 
+        private readonly DataGetter<T> dataGetter;
 
-        public UniWebRequestResult(UnityWebRequest request, DataGetter<T> dataGetter)
+
+        public UniWebRequestResult(UnityWebRequest request, DataGetter<T> dataGetter) : base(request)
         {
-            Request = request;
             this.dataGetter = dataGetter;
         }
 
-        public UniWebRequestResult(IRequest<T> request) : this(request.Request, request.DataGetter)
+        public UniWebRequestResult(UniWebRequest<T> request) : this(request.Request, request.DataGetter)
         {
-        }
-
-        public static implicit operator UniWebRequestResult(UniWebRequestResult<T> result)
-        {
-            return new UniWebRequestResult(result.Request);
         }
     }
 }
