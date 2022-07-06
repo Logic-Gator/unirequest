@@ -58,14 +58,20 @@ namespace GatOR.Logic.Web
             }
         }
 
-        public static void ThrowIfException(this UnityWebRequest request)
+        public static void ThrowIfError(this UnityWebRequest request)
         {
             if (TryGetException(request, out var exception))
                 throw exception;
         }
 
-        public static void ThrowIfException(this UniWebRequest request) => request.Request.ThrowIfException();
-        public static void ThrowIfException<T>(this UniWebRequest<T> request) => request.Request.ThrowIfException();
+        public static void ThrowIfError(this UniWebRequest request) => request.Request.ThrowIfError();
+        public static void ThrowIfError<T>(this UniWebRequest<T> request) => request.Request.ThrowIfError();
+        
+        public static T ThrowIfError<T>(this T result) where T : UniWebRequestResult
+        {
+            result.Request.ThrowIfError();
+            return result;
+        }
     }
 
     public class UniWebHttpException : UniWebException

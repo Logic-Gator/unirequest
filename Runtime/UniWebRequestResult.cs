@@ -44,11 +44,11 @@ namespace GatOR.Logic.Web
         {
             get
             {
-                if (!gotData)
-                {
-                    data = dataGetter(Request);
-                    gotData = true;
-                }
+                if (gotData)
+                    return data;
+                
+                data = dataGetter(Request);
+                gotData = true;
                 return data;
             }
         }

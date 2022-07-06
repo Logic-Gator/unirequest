@@ -42,12 +42,19 @@ namespace GatOR.Logic.Web
         public static UniWebRequest Options(string url) => new(url, "OPTIONS");
         public static UniWebRequest Options(Uri uri) => new(uri, "OPTIONS");
 
-        public static UniWebRequest Trace(string url) => new(url, "PATCH");
+        public static UniWebRequest Patch(string url) => new(url, "PATCH");
         public static UniWebRequest Patch(Uri uri) => new(uri, "PATCH");
 
         private static UnityWebRequest GetRequest(UnityWebRequest request) => request;
 
         public static implicit operator UnityWebRequest(UniWebRequest request) => request.Request;
         public static implicit operator UniWebRequest(UnityWebRequest request) => new(request);
+    }
+
+    public static class UniWebRequestExtensions
+    {
+        public static UniWebRequest AsUniWebRequest(this UnityWebRequest request) => new(request);
+        public static UniWebRequest<T> AsUniWebRequest<T>(this UnityWebRequest request, DataGetter<T> dataGetter) =>
+            new(request, dataGetter);
     }
 }

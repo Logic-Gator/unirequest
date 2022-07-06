@@ -23,7 +23,6 @@ namespace GatOR.Logic.Web
             CancellationToken cancellationToken = default)
         {
             await Send(request, cancellationToken);
-            request.ThrowIfException();
             return new(request);
         }
 
@@ -31,7 +30,6 @@ namespace GatOR.Logic.Web
             CancellationToken cancellationToken = default)
         {
             await Send(request.Request, cancellationToken);
-            request.ThrowIfException();
             return new(request);
         }
 
@@ -39,7 +37,6 @@ namespace GatOR.Logic.Web
             CancellationToken cancellationToken = default)
         {
             await sender(request.Request, cancellationToken);
-            request.ThrowIfException();
             return new(request);
         }
 
@@ -47,7 +44,6 @@ namespace GatOR.Logic.Web
             Func sender, CancellationToken cancellationToken = default)
         {
             await sender(request.Request, cancellationToken);
-            request.ThrowIfException();
             return new(request);
         }
     }

@@ -29,7 +29,6 @@ namespace GatOR.Logic.Web
                 }
                 await UniTask.Yield(timing);
             }
-            
         }
 
         public static async UniTask<UniWebRequestResult> SendAsUniTask(this UniWebRequest request,
@@ -37,7 +36,7 @@ namespace GatOR.Logic.Web
             CancellationToken cancellationToken = default)
         {
             await Send(request.Request, progress, timing, cancellationToken);
-            request.ThrowIfException();
+            request.ThrowIfError();
             return new(request);
         }
 
@@ -46,7 +45,6 @@ namespace GatOR.Logic.Web
             CancellationToken cancellationToken = default)
         {
             await Send(request.Request, progress, timing, cancellationToken);
-            request.ThrowIfException();
             return new(request);
         }
 
@@ -55,7 +53,6 @@ namespace GatOR.Logic.Web
             CancellationToken cancellationToken = default)
         {
             await sender(request.Request, progress, timing, cancellationToken);
-            request.ThrowIfException();
             return new(request);
         }
         
@@ -64,7 +61,6 @@ namespace GatOR.Logic.Web
             CancellationToken cancellationToken = default)
         {
             await sender(request.Request, progress, timing, cancellationToken);
-            request.ThrowIfException();
             return new(request);
         }
     }
