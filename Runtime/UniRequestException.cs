@@ -3,7 +3,7 @@ using UnityEngine.Networking;
 
 namespace GatOR.Logic.Web
 {
-    public abstract class UniWebException : Exception
+    public abstract class UniRequestException : Exception
     {
         public UnityWebRequest Request { get; }
         public UnityWebRequest.Result Result => Request.result;
@@ -12,24 +12,24 @@ namespace GatOR.Logic.Web
         public string Text => Request.downloadHandler.text;
         public byte[] Bytes => Request.downloadHandler.data;
 
-        private string message = null;
+        private string message;
         public override string Message
         {
             get
             {
-                if (message == null)
-                {
-                    string text = Text;
-                    if (text != null && text.Length > 100)
-                        text = text[..100] + "...";
+                if (message != null)
+                    return message;
+                
+                string text = Text;
+                if (text != null && text.Length > 100)
+                    text = text[..100] + "...";
 
-                    message = string.IsNullOrEmpty(text) ? Error : $"{Error}{Environment.NewLine}{text}";
-                }
+                message = string.IsNullOrEmpty(text) ? Error : $"{Error}{Environment.NewLine}{text}";
                 return message;
             }
         }
 
-        public UniWebException(UnityWebRequest request)
+        public UniRequestException(UnityWebRequest request)
         {
             Request = request;
         }
@@ -37,18 +37,18 @@ namespace GatOR.Logic.Web
 
     public static class UniWebExceptionExtensions
     {
-        public static bool TryGetException(this UnityWebRequest request, out UniWebException exception)
+        public static bool TryGetException(this UnityWebRequest request, out UniRequestException exception)
         {
             switch (request.result)
             {
                 case UnityWebRequest.Result.ConnectionError:
-                    exception = new UniWebConnectionException(request);
+                    exception = new UniRequestConnectionException(request);
                     return true;
                 case UnityWebRequest.Result.ProtocolError:
-                    exception = new UniWebHttpException(request);
+                    exception = new UniRequestHttpException(request);
                     return true;
                 case UnityWebRequest.Result.DataProcessingError:
-                    exception = new UniWebDataProcessingException(request);
+                    exception = new UniRequestDataProcessingException(request);
                     return true;
                 case UnityWebRequest.Result.Success:
                 case UnityWebRequest.Result.InProgress:
@@ -64,33 +64,33 @@ namespace GatOR.Logic.Web
                 throw exception;
         }
 
-        public static void ThrowIfError(this UniWebRequest request) => request.Request.ThrowIfError();
-        public static void ThrowIfError<T>(this UniWebRequest<T> request) => request.Request.ThrowIfError();
+        public static void ThrowIfError(this UniRequest request) => request.Request.ThrowIfError();
+        public static void ThrowIfError<T>(this UniRequest<T> request) => request.Request.ThrowIfError();
         
-        public static T ThrowIfError<T>(this T result) where T : UniWebRequestResult
+        public static T ThrowIfError<T>(this T result) where T : UniRequestResult
         {
             result.Request.ThrowIfError();
             return result;
         }
     }
 
-    public class UniWebHttpException : UniWebException
+    public class UniRequestHttpException : UniRequestException
     {
-        public UniWebHttpException(UnityWebRequest request) : base(request)
+        public UniRequestHttpException(UnityWebRequest request) : base(request)
         {
         }
     }
 
-    public class UniWebConnectionException : UniWebException
+    public class UniRequestConnectionException : UniRequestException
     {
-        public UniWebConnectionException(UnityWebRequest request) : base(request)
+        public UniRequestConnectionException(UnityWebRequest request) : base(request)
         {
         }
     }
 
-    public class UniWebDataProcessingException : UniWebException
+    public class UniRequestDataProcessingException : UniRequestException
     {
-        public UniWebDataProcessingException(UnityWebRequest request) : base(request)
+        public UniRequestDataProcessingException(UnityWebRequest request) : base(request)
         {
         }
     }

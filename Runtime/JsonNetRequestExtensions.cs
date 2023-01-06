@@ -19,13 +19,13 @@ namespace GatOR.Logic.Web
             return request;
         }
 
-        public static UniWebRequest<TJson> DownloadWithJsonNet<T, TJson>(this T request,
+        public static UniRequest<TJson> DownloadWithJsonNet<T, TJson>(this T request,
             TJson data = default, JsonSerializer serializer = null, bool ignoreHeader = false)
             where T : IRequest
         {
             var downloadHandler = new DownloadHandlerBuffer();
             request.DownloadWith(downloadHandler);
-            return new UniWebRequest<TJson>(request.Request, (request) =>
+            return new UniRequest<TJson>(request.Request, (request) =>
             {
                 return request.GetDataWithJsonNet(data, serializer, ignoreHeader);
             });

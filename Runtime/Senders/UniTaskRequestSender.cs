@@ -31,37 +31,37 @@ namespace GatOR.Logic.Web
             }
         }
 
-        public static async UniTask<UniWebRequestResult> SendAsUniTask(this UniWebRequest request,
+        public static async UniTask<UniRequestResult> SendAsUniTask(this UniRequest request,
             IProgress<float> progress = null, PlayerLoopTiming timing = PlayerLoopTiming.Update,
             CancellationToken cancellationToken = default)
         {
             await Send(request.Request, progress, timing, cancellationToken);
             request.ThrowIfError();
-            return new(request);
+            return new UniRequestResult(request);
         }
 
-        public static async UniTask<UniWebRequestResult<T>> SendAsUniTask<T>(this UniWebRequest<T> request,
+        public static async UniTask<UniRequestResult<T>> SendAsUniTask<T>(this UniRequest<T> request,
             IProgress<float> progress = null, PlayerLoopTiming timing = PlayerLoopTiming.Update,
             CancellationToken cancellationToken = default)
         {
             await Send(request.Request, progress, timing, cancellationToken);
-            return new(request);
+            return new UniRequestResult<T>(request);
         }
 
-        public static async UniTask<UniWebRequestResult> SendWith(this UniWebRequest request, Func sender,
+        public static async UniTask<UniRequestResult> SendUsing(this UniRequest request, Func sender,
             IProgress<float> progress = null, PlayerLoopTiming timing = PlayerLoopTiming.Update,
             CancellationToken cancellationToken = default)
         {
             await sender(request.Request, progress, timing, cancellationToken);
-            return new(request);
+            return new UniRequestResult(request);
         }
         
-        public static async UniTask<UniWebRequestResult<T>> SendWith<T>(this UniWebRequest<T> request, Func sender,
+        public static async UniTask<UniRequestResult<T>> SendUsing<T>(this UniRequest<T> request, Func sender,
             IProgress<float> progress = null, PlayerLoopTiming timing = PlayerLoopTiming.Update,
             CancellationToken cancellationToken = default)
         {
             await sender(request.Request, progress, timing, cancellationToken);
-            return new(request);
+            return new UniRequestResult<T>(request);
         }
     }
 }

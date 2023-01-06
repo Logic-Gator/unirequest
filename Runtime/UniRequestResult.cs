@@ -3,7 +3,7 @@ using UnityEngine.Networking;
 
 namespace GatOR.Logic.Web
 {
-    public class UniWebRequestResult
+    public class UniRequestResult
     {
 #if JSONNET
         [Newtonsoft.Json.JsonIgnore]
@@ -17,12 +17,12 @@ namespace GatOR.Logic.Web
             return Request.GetResponseHeader(headerName);
         }
 
-        public UniWebRequestResult(UnityWebRequest request)
+        public UniRequestResult(UnityWebRequest request)
         {
             Request = request;
         }
 
-        public UniWebRequestResult(UniWebRequest request) : this(request.Request)
+        public UniRequestResult(UniRequest request) : this(request.Request)
         {
         }
 
@@ -36,7 +36,7 @@ namespace GatOR.Logic.Web
 #endif
     }
 
-    public class UniWebRequestResult<T> : UniWebRequestResult
+    public class UniRequestResult<T> : UniRequestResult
     {
         private bool gotData;
         private T data;
@@ -56,12 +56,12 @@ namespace GatOR.Logic.Web
         private readonly DataGetter<T> dataGetter;
 
 
-        public UniWebRequestResult(UnityWebRequest request, DataGetter<T> dataGetter) : base(request)
+        public UniRequestResult(UnityWebRequest request, DataGetter<T> dataGetter) : base(request)
         {
             this.dataGetter = dataGetter;
         }
 
-        public UniWebRequestResult(UniWebRequest<T> request) : this(request.Request, request.DataGetter)
+        public UniRequestResult(UniRequest<T> request) : this(request.Request, request.DataGetter)
         {
         }
     }

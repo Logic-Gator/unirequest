@@ -6,7 +6,7 @@ namespace GatOR.Logic.Web
 {
     public static class DownloadBuilderExtensions
     {
-        public static UniWebRequest DownloadNothing(this UniWebRequest request)
+        public static UniRequest DownloadNothing(this UniRequest request)
         {
             request.Request.DownloadNothing();
             return request;
@@ -26,17 +26,17 @@ namespace GatOR.Logic.Web
         }
 
 
-        public static UniWebRequest<TData> DownloadWith<T, TData>(this T request, DataGetter<TData> dataGetter)
+        public static UniRequest<TData> DownloadWith<T, TData>(this T request, DataGetter<TData> dataGetter)
             where T : IRequest
         {
-            return new UniWebRequest<TData>(request.Request, dataGetter);
+            return new UniRequest<TData>(request.Request, dataGetter);
         }
 
-        public static UniWebRequest<TData> DownloadWith<T, TData>(this T request, DataGetter<TData> dataGetter, DownloadHandler downloadHandler)
+        public static UniRequest<TData> DownloadWith<T, TData>(this T request, DataGetter<TData> dataGetter, DownloadHandler downloadHandler)
             where T : IRequest
         {
             request.Request.downloadHandler = downloadHandler;
-            return new UniWebRequest<TData>(request.Request, dataGetter);
+            return new UniRequest<TData>(request.Request, dataGetter);
         }
 
         public static T DownloadWith<T>(this T request, DownloadHandler downloadHandler)
@@ -46,20 +46,20 @@ namespace GatOR.Logic.Web
             return request;
         }
 
-        public static UniWebRequest<TData> DownloadWithBuffer<T, TData>(this T request, DataGetter<TData> dataGetter)
+        public static UniRequest<TData> DownloadWithBuffer<T, TData>(this T request, DataGetter<TData> dataGetter)
             where T : IRequest
         {
             return request.DownloadWith(dataGetter, new DownloadHandlerBuffer());
         }
 
-        public static UniWebRequest<string> DownloadText<T>(this T request)
+        public static UniRequest<string> DownloadText<T>(this T request)
             where T : IRequest
         {
             return request.DownloadWithBuffer(r => r.downloadHandler.text);
         }
 
 #pragma warning disable IDE0060 // Remove unused parameter
-        public static UniWebRequest<TJson> DownloadWithJsonUtility<T, TJson>(this T request, TJson bodyType)
+        public static UniRequest<TJson> DownloadWithJsonUtility<T, TJson>(this T request, TJson bodyType)
 #pragma warning restore IDE0060
             where T : IRequest
         {
@@ -67,10 +67,10 @@ namespace GatOR.Logic.Web
             return request.DownloadWithBuffer(r => JsonUtility.FromJson<TJson>(r.downloadHandler.text));
         }
 
-        public static UniWebRequest<Texture2D> DownloadTexture<T>(this T request, bool readable = false) where T : IRequest
+        public static UniRequest<Texture2D> DownloadTexture<T>(this T request, bool readable = false) where T : IRequest
         {
             request.DownloadWith(new DownloadHandlerTexture(readable));
-            return new UniWebRequest<Texture2D>(request.Request, DownloadHandlerTexture.GetContent);
+            return new UniRequest<Texture2D>(request.Request, DownloadHandlerTexture.GetContent);
         }
     }
 }

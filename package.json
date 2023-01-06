@@ -1,13 +1,13 @@
 {
-  "name": "com.chonkygator.logic.web",
-  "version": "0.0.1",
-  "displayName": "GatOR Web",
+  "name": "com.chonkygator.unirequest",
+  "version": "0.1.0",
+  "displayName": "UniRequest",
   "unity": "2020.3",
-  "dependencies": {
-  },
   "keywords": [
     "gator",
     "logicgator",
     "chonkygator"
-  ]
+  ],
+  "description": "UnityWebRequest wrapper to allow easier construction of request with chaining and easier response handling with DataGetters.\n\nYou can create a new request with UniRequest.(METHOD) and send them with .SendAsTask, SendAsOperation or SendUsing(SendFunction).\n\nSupport with UniTask and Json.Net",
+  "type": "library"
 }

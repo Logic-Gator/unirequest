@@ -13,12 +13,12 @@ namespace GatOR.Logic.Web
             return request.SendWebRequest();
         }
 
-        public static UnityWebRequestAsyncOperation SendAsOperation(this UniWebRequest request)
+        public static UnityWebRequestAsyncOperation SendAsOperation(this UniRequest request)
         {
             return Send(request.Request);
         }
 
-        public static UnityWebRequestAsyncOperation SendAsyncWith(this UniWebRequest request, Func sender)
+        public static UnityWebRequestAsyncOperation SendUsing(this UniRequest request, Func sender)
         {
             return sender(request.Request);
         }

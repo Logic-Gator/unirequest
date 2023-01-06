@@ -19,32 +19,32 @@ namespace GatOR.Logic.Web
             cancellationToken.ThrowIfCancellationRequested();
         }
 
-        public static async Task<UniWebRequestResult> SendAsTask(this UniWebRequest request,
+        public static async Task<UniRequestResult> SendAsTask(this UniRequest request,
             CancellationToken cancellationToken = default)
         {
             await Send(request, cancellationToken);
-            return new(request);
+            return new UniRequestResult(request);
         }
 
-        public static async Task<UniWebRequestResult<T>> SendAsTask<T>(this UniWebRequest<T> request,
+        public static async Task<UniRequestResult<T>> SendAsTask<T>(this UniRequest<T> request,
             CancellationToken cancellationToken = default)
         {
             await Send(request.Request, cancellationToken);
-            return new(request);
+            return new UniRequestResult<T>(request);
         }
 
-        public static async Task<UniWebRequestResult> SendAsyncWith(this UniWebRequest request, Func sender,
+        public static async Task<UniRequestResult> SendUsing(this UniRequest request, Func sender,
             CancellationToken cancellationToken = default)
         {
             await sender(request.Request, cancellationToken);
-            return new(request);
+            return new UniRequestResult(request);
         }
 
-        public static async Task<UniWebRequestResult<T>> SendAsyncWith<T>(this UniWebRequest<T> request,
+        public static async Task<UniRequestResult<T>> SendUsing<T>(this UniRequest<T> request,
             Func sender, CancellationToken cancellationToken = default)
         {
             await sender(request.Request, cancellationToken);
-            return new(request);
+            return new UniRequestResult<T>(request);
         }
     }
 }
