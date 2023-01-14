@@ -1,4 +1,4 @@
-
+using GatOR.Logic.Web.Constants;
 
 namespace GatOR.Logic.Web
 {
@@ -10,15 +10,15 @@ namespace GatOR.Logic.Web
             return request;
         }
 
-        public static T SetContentTypeHeader<T>(this T request, string contentType) where T : IRequest
+        public static T SetContentTypeHeader<T>(this T request, string mimeType) where T : IRequest
         {
-            request.Request.SetRequestHeader("Content-Type", contentType);
+            request.Request.SetRequestHeader("Content-Type", mimeType);
             return request;
         }
 
         public static T SetJsonContentTypeHeader<T>(this T request) where T : IRequest
         {
-            request.Request.SetRequestHeader("Content-Type", "application/json");
+            request.Request.SetRequestHeader("Content-Type", MimeTypes.Json);
             return request;
         }
 

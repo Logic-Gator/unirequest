@@ -59,10 +59,8 @@ namespace GatOR.Logic.Web
                 using var jsonReader = new JsonTextReader(reader);
                 return serializer.Deserialize<T>(jsonReader); 
             }
-            else
-            {
-                return JsonConvert.DeserializeObject<T>(text);
-            }
+            
+            return JsonConvert.DeserializeObject<T>(text);
         }
     }
 }

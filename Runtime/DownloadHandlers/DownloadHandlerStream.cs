@@ -5,13 +5,13 @@ namespace GatOR.Logic.Web
 {
     public class DownloadHandlerStream : DownloadHandlerScript
     {
-        private static readonly byte[] sharedBuffer = new byte[1024];
+        private static readonly byte[] SharedBuffer = new byte[1024];
         
         protected int received;
         public ulong ContentLength { get; private set; }
         protected readonly Stream stream;
 
-        public DownloadHandlerStream(Stream stream) : base(sharedBuffer)
+        public DownloadHandlerStream(Stream stream) : base(SharedBuffer)
         {
             this.stream = stream;
         }

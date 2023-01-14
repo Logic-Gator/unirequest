@@ -1,4 +1,8 @@
 using System.Threading;
+using System.Threading.Tasks;
+#if UNITASK
+using Cysharp.Threading.Tasks;
+#endif
 
 namespace GatOR.Logic.Web
 {
@@ -9,5 +13,21 @@ namespace GatOR.Logic.Web
             cancellationToken.Register(request.Request.Abort);
             return request;
         }
+
+        public static async Task<T> ThrowOnError<T>(this Task<T> task) where T : UniRequestResult
+        {
+            var result = await task;
+            result.ThrowIfError();
+            return result;
+        }
+        
+        #if UNITASK
+        public static async UniTask<T> ThrowOnError<T>(this UniTask<T> task) where T : UniRequestResult
+        {
+            var result = await task;
+            result.ThrowIfError();
+            return result;
+        }
+        #endif
     }
 }

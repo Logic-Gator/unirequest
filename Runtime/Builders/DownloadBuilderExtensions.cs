@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using GatOR.Logic.Web.Constants;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -59,12 +60,23 @@ namespace GatOR.Logic.Web
         }
 
 #pragma warning disable IDE0060 // Remove unused parameter
-        public static UniRequest<TJson> DownloadWithJsonUtility<T, TJson>(this T request, TJson bodyType)
+        public static UniRequest<TJson> DownloadWithJsonUtility<T, TJson>(this T request, TJson data, bool overwriteData = true)
 #pragma warning restore IDE0060
             where T : IRequest
         {
-            request.SetAcceptHeader("application/json");
-            return request.DownloadWithBuffer(r => JsonUtility.FromJson<TJson>(r.downloadHandler.text));
+            request.SetAcceptHeader(MimeTypes.Json);
+            return request.DownloadWithBuffer(GetData);
+
+            TJson GetData(UnityWebRequest result)
+            {
+                var json = result.downloadHandler.text;
+                if (!overwriteData || data == null)
+                    return JsonUtility.FromJson<TJson>(json);
+                
+                JsonUtility.FromJsonOverwrite(json, data);
+                return data;
+
+            }
         }
 
         public static UniRequest<Texture2D> DownloadTexture<T>(this T request, bool readable = false) where T : IRequest
