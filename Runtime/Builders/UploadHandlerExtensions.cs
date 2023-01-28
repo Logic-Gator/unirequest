@@ -14,24 +14,39 @@ namespace GatOR.Logic.Web
 			return request;
 		}
 		
-		public static T UploadBytes<T>(this T request, byte[] bytes)
+		public static T UploadBytes<T>(this T request, byte[] bytes, string contentType = null)
 			where T : IRequest
 		{
-			return request.UploadWith(new UploadHandlerRaw(bytes));
+			var handler = new UploadHandlerRaw(bytes);
+			if (contentType != null)
+				handler.contentType = contentType;
+			return request.UploadWith(handler);
 		}
 		
-		public static T UploadBytes<T>(this T request, NativeArray<byte>.ReadOnly bytes)
+		public static T UploadBytes<T>(this T request, NativeArray<byte>.ReadOnly bytes, string contentType = null)
 			where T : IRequest
 		{
-			return request.UploadWith(new UploadHandlerRaw(bytes));
+			var handler = new UploadHandlerRaw(bytes);
+			if (contentType != null)
+				handler.contentType = contentType;
+			return request.UploadWith(handler);
 		}
 		
-		public static T UploadBytes<T>(this T request, NativeArray<byte> bytes, bool transferOwnership)
+		public static T UploadBytes<T>(this T request, NativeArray<byte> bytes, bool transferOwnership,
+			string contentType = null)
 			where T : IRequest
 		{
-			return request.UploadWith(new UploadHandlerRaw(bytes, transferOwnership));
+			var handler = new UploadHandlerRaw(bytes, transferOwnership);
+			if (contentType != null)
+				handler.contentType = contentType;
+			return request.UploadWith(handler);
 		}
-		
+
+		public static T UploadFile<T>(this T request, string filePath) where T : IRequest
+		{
+			return request.UploadWith(new UploadHandlerFile(filePath));
+		}
+
 		public static T UploadWithJsonUtility<T, TJson>(this T request, TJson body, Encoding encoding = null)
 			where T : IRequest
 		{
