@@ -14,18 +14,20 @@ namespace GatOR.Logic.Web
             return request;
         }
 
-        public static async Task<T> ThrowOnError<T>(this Task<T> task) where T : UniRequestResult
+        public static async Task<T> ThrowOnError<T>(this Task<T> task, bool throwOnHttpError = true)
+            where T : UniRequestResult
         {
             var result = await task;
-            result.ThrowIfError();
+            result.ThrowIfError(throwOnHttpError);
             return result;
         }
         
         #if UNITASK
-        public static async UniTask<T> ThrowOnError<T>(this UniTask<T> task) where T : UniRequestResult
+        public static async UniTask<T> ThrowOnError<T>(this UniTask<T> task, bool throwOnHttpError = true)
+            where T : UniRequestResult
         {
             var result = await task;
-            result.ThrowIfError();
+            result.ThrowIfError(throwOnHttpError);
             return result;
         }
         #endif

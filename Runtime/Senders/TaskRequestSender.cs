@@ -12,7 +12,7 @@ namespace GatOR.Logic.Web
 
         public static async Task Send(UnityWebRequest request, CancellationToken cancellationToken = default)
         {
-            request.DownloadNothingIfNotSet();
+            request.DefaultDownloadIfNotSet();
 
             cancellationToken.Register(request.Abort);
             await request.SendWebRequest();

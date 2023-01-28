@@ -9,20 +9,12 @@ namespace GatOR.Logic.Web
     {
         public static UniRequest DownloadNothing(this UniRequest request)
         {
-            request.Request.DownloadNothing();
-            return request;
+            return request.DownloadWith(NoDownloadHandler.Instance);
         }
 
-        public static UnityWebRequest DownloadNothing(this UnityWebRequest request)
+        public static UnityWebRequest DefaultDownloadIfNotSet(this UnityWebRequest request)
         {
-            request.downloadHandler = NoDownloadHandler.Instance;
-            return request;
-        }
-
-        public static UnityWebRequest DownloadNothingIfNotSet(this UnityWebRequest request)
-        {
-            if (request.downloadHandler == null)
-                request.DownloadNothing();
+            request.downloadHandler ??= new DownloadHandlerBuffer();
             return request;
         }
 

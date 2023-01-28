@@ -1,4 +1,11 @@
+using System.IO;
+using GatOR.Logic.Web.Constants;
+using Unity.Collections;
 using UnityEngine.Networking;
+
+#if JSONNET
+using Newtonsoft.Json;
+#endif
 
 
 namespace GatOR.Logic.Web
@@ -6,16 +13,16 @@ namespace GatOR.Logic.Web
     public class UniRequestResult
     {
 #if JSONNET
-        [Newtonsoft.Json.JsonIgnore]
+        [JsonIgnore]
 #endif
         public UnityWebRequest Request { get; }
         public long Status => Request.responseCode;
         public string Error => Request.error;
+        public string ContentType => GetHeaderValue(Headers.ContentType);
 
-        public string GetHeaderValue(string headerName)
-        {
-            return Request.GetResponseHeader(headerName);
-        }
+        public string Text => Request.downloadHandler.text;
+        public byte[] Bytes => Request.downloadHandler.data;
+        public NativeArray<byte>.ReadOnly NativeBytes => Request.downloadHandler.nativeData;
 
         public UniRequestResult(UnityWebRequest request)
         {
@@ -25,11 +32,24 @@ namespace GatOR.Logic.Web
         public UniRequestResult(UniRequest request) : this(request.Request)
         {
         }
+        
+        public string GetHeaderValue(string headerName)
+        {
+            return Request.GetResponseHeader(headerName);
+        }
 
 #if JSONNET
-        public string ToJson(Newtonsoft.Json.Formatting formatting = Newtonsoft.Json.Formatting.Indented)
+        public T GetJson<T>(JsonSerializer serializer = null)
         {
-            return Newtonsoft.Json.JsonConvert.SerializeObject(this, formatting);
+            serializer ??= JsonSerializer.CreateDefault();
+            using var reader = new StringReader(Text);
+            using var jsonReader = new JsonTextReader(reader);
+            return serializer.Deserialize<T>(jsonReader);
+        }
+        
+        public string ToJson(Formatting formatting = Formatting.Indented)
+        {
+            return JsonConvert.SerializeObject(this, formatting);
         }
 
         public override string ToString() => ToJson();

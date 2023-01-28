@@ -10,6 +10,7 @@ namespace GatOR.Logic.Web
 
         public static UnityWebRequestAsyncOperation Send(UnityWebRequest request)
         {
+            request.DefaultDownloadIfNotSet();
             return request.SendWebRequest();
         }
 

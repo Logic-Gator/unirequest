@@ -1,4 +1,5 @@
 using System;
+using Unity.Collections;
 using UnityEngine.Networking;
 
 namespace GatOR.Logic.Web
@@ -11,6 +12,7 @@ namespace GatOR.Logic.Web
         public string Error => Request.error;
         public string Text => Request.downloadHandler.text;
         public byte[] Bytes => Request.downloadHandler.data;
+        public NativeArray<byte>.ReadOnly NativeData => Request.downloadHandler.nativeData;
 
         private string message;
         public override string Message
@@ -37,7 +39,8 @@ namespace GatOR.Logic.Web
 
     public static class UniWebExceptionExtensions
     {
-        public static bool TryGetException(this UnityWebRequest request, out UniRequestException exception)
+        public static bool TryGetException(this UnityWebRequest request, out UniRequestException exception,
+            bool throwOnHttpError = true)
         {
             switch (request.result)
             {
@@ -45,6 +48,9 @@ namespace GatOR.Logic.Web
                     exception = new UniRequestConnectionException(request);
                     return true;
                 case UnityWebRequest.Result.ProtocolError:
+                    if (!throwOnHttpError)
+                        goto default;
+                    
                     exception = new UniRequestHttpException(request);
                     return true;
                 case UnityWebRequest.Result.DataProcessingError:
@@ -58,18 +64,20 @@ namespace GatOR.Logic.Web
             }
         }
 
-        public static void ThrowIfError(this UnityWebRequest request)
+        public static void ThrowIfError(this UnityWebRequest request, bool throwOnHttpError = true)
         {
-            if (TryGetException(request, out var exception))
+            if (TryGetException(request, out var exception, throwOnHttpError))
                 throw exception;
         }
 
-        public static void ThrowIfError(this UniRequest request) => request.Request.ThrowIfError();
-        public static void ThrowIfError<T>(this UniRequest<T> request) => request.Request.ThrowIfError();
+        public static void ThrowIfError(this UniRequest request, bool throwOnHttpError = true) =>
+            request.Request.ThrowIfError(throwOnHttpError);
+        public static void ThrowIfError<T>(this UniRequest<T> request, bool throwOnHttpError = true) =>
+            request.Request.ThrowIfError(throwOnHttpError);
         
-        public static T ThrowIfError<T>(this T result) where T : UniRequestResult
+        public static T ThrowIfError<T>(this T result, bool throwOnHttpError = true) where T : UniRequestResult
         {
-            result.Request.ThrowIfError();
+            result.Request.ThrowIfError(throwOnHttpError);
             return result;
         }
     }

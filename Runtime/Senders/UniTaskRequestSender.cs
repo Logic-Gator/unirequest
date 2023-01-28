@@ -18,7 +18,8 @@ namespace GatOR.Logic.Web
             PlayerLoopTiming timing = PlayerLoopTiming.Update,
             CancellationToken cancellationToken = default)
         {
-            var operation = request.DownloadNothingIfNotSet().SendWebRequest();
+            // Done this way to let UniRequest to throw errors instead of UniTask
+            var operation = request.DefaultDownloadIfNotSet().SendWebRequest();
             while (!operation.isDone)
             {
                 progress?.Report(operation.progress);
