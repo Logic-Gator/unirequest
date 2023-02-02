@@ -16,8 +16,10 @@ namespace GatOR.Logic.Web
         [JsonIgnore]
 #endif
         public UnityWebRequest Request { get; }
+
+        public UnityWebRequest.Result Result => Request.result;
         public long Status => Request.responseCode;
-        public string Error => Request.error;
+        public string ErrorMessage => Request.error;
         public string ContentType => GetHeaderValue(Headers.ContentType);
 
         public string Text => Request.downloadHandler.text;

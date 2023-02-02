@@ -37,7 +37,7 @@ namespace GatOR.Logic.Web
             CancellationToken cancellationToken = default)
         {
             await Send(request.Request, progress, timing, cancellationToken);
-            request.ThrowIfError();
+            request.Request.ThrowIfError();
             return new UniRequestResult(request);
         }
 

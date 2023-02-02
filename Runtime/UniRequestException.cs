@@ -39,6 +39,18 @@ namespace GatOR.Logic.Web
 
     public static class UniWebExceptionExtensions
     {
+        public static T ThrowIfError<T>(this T result, bool throwOnHttpError = true) where T : UniRequestResult
+        {
+            result.Request.ThrowIfError(throwOnHttpError);
+            return result;
+        }
+
+        public static void ThrowIfError(this UnityWebRequest request, bool throwOnHttpError = true)
+        {
+            if (TryGetException(request, out var exception, throwOnHttpError))
+                throw exception;
+        }
+        
         public static bool TryGetException(this UnityWebRequest request, out UniRequestException exception,
             bool throwOnHttpError = true)
         {
@@ -50,7 +62,6 @@ namespace GatOR.Logic.Web
                 case UnityWebRequest.Result.ProtocolError:
                     if (!throwOnHttpError)
                         goto default;
-                    
                     exception = new UniRequestHttpException(request);
                     return true;
                 case UnityWebRequest.Result.DataProcessingError:
@@ -62,23 +73,6 @@ namespace GatOR.Logic.Web
                     exception = null;
                     return false;
             }
-        }
-
-        public static void ThrowIfError(this UnityWebRequest request, bool throwOnHttpError = true)
-        {
-            if (TryGetException(request, out var exception, throwOnHttpError))
-                throw exception;
-        }
-
-        public static void ThrowIfError(this UniRequest request, bool throwOnHttpError = true) =>
-            request.Request.ThrowIfError(throwOnHttpError);
-        public static void ThrowIfError<T>(this UniRequest<T> request, bool throwOnHttpError = true) =>
-            request.Request.ThrowIfError(throwOnHttpError);
-        
-        public static T ThrowIfError<T>(this T result, bool throwOnHttpError = true) where T : UniRequestResult
-        {
-            result.Request.ThrowIfError(throwOnHttpError);
-            return result;
         }
     }
 
