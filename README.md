@@ -6,11 +6,12 @@ Can be installed as a unity package with this git url.
 
 ```C#
 // To start a new request just use UniRequest.(Method)
-// Then you can chain to modify the request before sending it
+// Then you can method chain to modify the request before sending it
 var result = await UniRequest.Get("https://github.com")
   .SetAuthorizationHeader("AuthorizationType", "Value")
   .SetHeader("CustomKey", "You can set custom headers")
-  .DownloadText() // You can easily set what download handler will you use, this will download a string in the result
+  // You can easily set what download handler will you use, this will download a string in the result
+  .DownloadText()
   .SendAsUniTask(); // Finish by sending the request, compatible with UniTask
 
 Debug.Log(result.Status); // Result object contains many useful data like the status itself
@@ -35,5 +36,6 @@ var unityWebRequest = UnityWebRequest.Post("Test", "data");
 
 unityWebRequest.AsUniRequest() // You can transform Unity's UnityWebRequests to UniRequests
   SetJsonContentTypeHeader() // And chain UniRequest builders
-  SendUsing(TaskRequestSender.Sender); // You can also set a custom sender for mocking or adding behaviour like authentication
+  // You can also set a custom sender for mocking or adding behaviour like authentication
+  SendUsing(TaskRequestSender.Sender);
 ```
