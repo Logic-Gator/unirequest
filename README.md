@@ -35,7 +35,7 @@ Debug.Log(response.userId);
 var unityWebRequest = UnityWebRequest.Post("Test", "data");
 
 unityWebRequest.AsUniRequest() // You can transform Unity's UnityWebRequests to UniRequests
-  SetJsonContentTypeHeader() // And chain UniRequest builders
+  .SetJsonContentTypeHeader() // And chain UniRequest builders
   // You can also set a custom sender for mocking or adding behaviour like authentication
-  SendUsing(TaskRequestSender.Sender);
+  .SendUsing(TaskRequestSender.Sender);
 ```
